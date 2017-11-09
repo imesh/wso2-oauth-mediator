@@ -1,0 +1,11 @@
+[
+  {
+    "id": "EP1",
+    "tokenApiUrl": "http://localhost:8280/token",
+    "apiKey": "1234",
+    "apiSecret": "4321",
+    "username": "admin",
+    "password": "admin",
+    "tokenRefreshInterval": 60
+  }
+]

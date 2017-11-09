@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.wso2.apim.mediators.oauth.client;
+package org.wso2.apim.mediators.oauth;
 
 import java.util.HashMap;
 import java.util.Map;

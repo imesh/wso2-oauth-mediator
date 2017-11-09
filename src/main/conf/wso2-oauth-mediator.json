@@ -1,0 +1,11 @@
+[
+  {
+    "id": "EP1",
+    "tokenApiUrl": "",
+    "apiKey": "",
+    "apiSecret": "",
+    "username": "admin",
+    "password": "admin",
+    "tokenRefreshInterval": 20
+  }
+]

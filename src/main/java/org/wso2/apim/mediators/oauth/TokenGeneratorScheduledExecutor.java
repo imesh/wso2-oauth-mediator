@@ -12,11 +12,13 @@
  * limitations under the License.
  */
 
-package org.wso2.apim.mediators.oauth.client;
+package org.wso2.apim.mediators.oauth;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.apim.mediators.oauth.client.OAuthClient;
 import org.wso2.apim.mediators.oauth.client.domain.TokenResponse;
+import org.wso2.apim.mediators.oauth.conf.OAuthEndpoint;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -30,43 +32,38 @@ public class TokenGeneratorScheduledExecutor {
     private static final Log log = LogFactory.getLog(TokenGeneratorScheduledExecutor.class);
 
     private ScheduledExecutorService executorService;
-    private String tokenApiUrl;
-    private String apiKey;
-    private String apiSecret;
-    private String username;
-    private String password;
-    private int tokenRefreshInterval;
 
     public TokenGeneratorScheduledExecutor() {
-        this.executorService = new ScheduledThreadPoolExecutor(1);
-        this.tokenApiUrl = System.getenv("OAUTH_MEDIATOR_TOKEN_API_URL");
-        this.apiKey = System.getenv("OAUTH_MEDIATOR_API_KEY");
-        this.apiSecret = System.getenv("OAUTH_MEDIATOR_API_SECRET");
-        this.username = System.getenv("OAUTH_MEDIATOR_USERNAME");
-        this.password = System.getenv("OAUTH_MEDIATOR_PASSWORD");
-        this.tokenRefreshInterval = Integer.parseInt(System.getenv("OAUTH_MEDIATOR_TOKEN_REFRESH_INTERVAL"));
+        this.executorService = new ScheduledThreadPoolExecutor(5);
     }
 
     /**
      * Initialize oauth client scheduled executor
      */
-    public void init() {
+    public void schedule(OAuthEndpoint oAuthEndpoint) {
         try {
-            log.info("Initializing oauth token generator...");
+            log.info("Scheduling token generator for token endpoint " + getEndpointId(oAuthEndpoint));
 
             executorService.scheduleAtFixedRate(()->{
                 try {
-                    log.info("Generating access token: [token-endpoint] " + tokenApiUrl);
-                    TokenResponse tokenResponse = OAuthClient.generateToken(tokenApiUrl, apiKey, apiSecret,
-                            username, password);
-                    log.info("Access token: " + tokenResponse.getAccessToken());
-                    TokenCache.getInstance().getTokenMap().put("AccessToken", tokenResponse.getAccessToken());
+                    log.info("Generating access token: " + getEndpointId(oAuthEndpoint));
+
+                    TokenResponse tokenResponse = OAuthClient.generateToken(oAuthEndpoint.getTokenApiUrl(),
+                            oAuthEndpoint.getApiKey(), oAuthEndpoint.getApiSecret(), oAuthEndpoint.getUsername(),
+                            oAuthEndpoint.getPassword());
+                    log.info("Access token generated: " + getEndpointId(oAuthEndpoint)
+                            + " [access-token] " + tokenResponse.getAccessToken());
+                    TokenCache.getInstance().getTokenMap().put(oAuthEndpoint.getId(), tokenResponse.getAccessToken());
                 } catch (Exception e) {
-                    log.error(e);
+                    log.error("Could not generated access token " + getEndpointId(oAuthEndpoint), e);
                 }
-            }, 0, tokenRefreshInterval, TimeUnit.SECONDS);
+            }, 0, oAuthEndpoint.getTokenRefreshInterval(), TimeUnit.SECONDS);
         } catch (Exception e) {
             log.error(e);
         }
+    }
+
+    private String getEndpointId(OAuthEndpoint oAuthEndpoint) {
+        return "[id] " + oAuthEndpoint.getId() + " [url] " + oAuthEndpoint.getTokenApiUrl();
     }
 }
