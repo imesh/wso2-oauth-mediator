@@ -1,0 +1,3 @@
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="oauth-sequence2">
+    <class name = "org.wso2.apim.mediators.oauth.OAuthMediator"></class>
+</sequence>
