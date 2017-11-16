@@ -6,6 +6,7 @@
     "apiSecret": "0987654321",
     "username": "admin",
     "password": "admin",
+    "grantType": "password",
     "tokenRefreshInterval": 20
   }
 ]

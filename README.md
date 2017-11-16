@@ -2,14 +2,14 @@
 
 WSO2 OAuth mediator can be used for generating OAuth2 tokens for talking to service endpoints 
 secured with OAuth2 protocol in WSO2 ESB/Integrator and API Manager. Currently, it only supports 
-password grant type and it can be extended to incorporate other grant types as required.
+password grant type and client-credentials grant type and it can be extended to incorporate other grant types as required.
 
 ## Getting Started
 
 1. Clone this project:
 
    ````
-   git clone https://github.com/imesh/wso2-oauth-meditor
+   git clone https://github.com/imesh/wso2-oauth-mediator
    cd wso2-oauth-mediator/
    ````
 
@@ -37,11 +37,12 @@ password grant type and it can be extended to incorporate other grant types as r
        "apiSecret": "0987654321",
        "username": "admin",
        "password": "admin",
+       "grantType": "password",
        "tokenRefreshInterval": 20
      }
    ]
    ````
-   
+   Note: If you want to use client-credentials grant type, change grantType to "client-credentials".
    Note that the token refresh interval is defined in seconds.
 
 5. Create a sequence with the following OAuthMediator and the endpoint id provided in the configuration:

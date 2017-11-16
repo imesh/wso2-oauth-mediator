@@ -22,6 +22,7 @@ public class OAuthEndpoint {
     private String apiSecret;
     private String username;
     private String password;
+    private String grantType;
     private int tokenRefreshInterval;
 
     public String getId() {
@@ -70,6 +71,14 @@ public class OAuthEndpoint {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getGrantType() {
+        return grantType;
+    }
+
+    public void setGrantType(String grantType) {
+        this.grantType = grantType;
     }
 
     public int getTokenRefreshInterval() {

@@ -50,32 +50,49 @@ public class OAuthClient {
      * @param apiSecret api consumer secret
      * @param username username
      * @param password password
+     * @param grantType password or client_credentials
      * @return
      * @throws IOException
      */
     public static TokenResponse generateToken(String url, String apiKey, String apiSecret,
-                                              String username, String password)
+                                              String username, String password, String grantType)
             throws IOException {
 
         if(log.isDebugEnabled()) {
             log.debug("Initializing token generation request: [token-endpoint] " + url);
         }
 
+        HttpURLConnection connection = null;
         // Set query parameters
-        String query = String.format("grant_type=password&username=%s&password=%s",
-                URLEncoder.encode(username, UTF_8), URLEncoder.encode(password, UTF_8));
-        url += "?" + query;
-        URL url_ = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection) url_.openConnection();
-        connection.setDoOutput(true);
+        if (grantType.equals("password")) {
+            String query = String.format("grant_type=password&username=%s&password=%s",
+                    URLEncoder.encode(username, UTF_8), URLEncoder.encode(password, UTF_8));
+            url += "?" + query;
+            URL url_ = new URL(url);
+            connection = (HttpURLConnection) url_.openConnection();
+            connection.setDoOutput(true);
 
-        // Set HTTP method
-        connection.setRequestMethod(HTTP_POST);
+            // Set HTTP method
+            connection.setRequestMethod(HTTP_POST);
 
-        // Set authorization header
-        String credentials = Base64.getEncoder().encodeToString((apiKey + ":" + apiSecret).getBytes());
-        connection.setRequestProperty(AUTHORIZATION_HEADER, "Basic " + credentials);
-        connection.setRequestProperty(CONTENT_TYPE_HEADER, APPLICATION_X_WWW_FORM_URLENCODED);
+            // Set authorization header
+            String credentials = Base64.getEncoder().encodeToString((apiKey + ":" + apiSecret).getBytes());
+            connection.setRequestProperty(AUTHORIZATION_HEADER, "Basic " + credentials);
+            connection.setRequestProperty(CONTENT_TYPE_HEADER, APPLICATION_X_WWW_FORM_URLENCODED);
+        } else if (grantType.equals("client_credentials")) {
+            url += "?grant_type=client_credentials";
+            URL url_ = new URL(url);
+            connection = (HttpURLConnection) url_.openConnection();
+            connection.setDoOutput(true);
+
+            // Set HTTP method
+            connection.setRequestMethod(HTTP_POST);
+
+            // Set authorization header
+            String credentials = Base64.getEncoder().encodeToString((apiKey + ":" + apiSecret).getBytes());
+            connection.setRequestProperty(AUTHORIZATION_HEADER, "Basic " + credentials);
+            connection.setRequestProperty(CONTENT_TYPE_HEADER, APPLICATION_X_WWW_FORM_URLENCODED);
+        }
 
         // Make HTTP request
         log.debug("Requesting access token...");

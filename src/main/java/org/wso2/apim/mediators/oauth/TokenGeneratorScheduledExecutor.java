@@ -50,7 +50,7 @@ public class TokenGeneratorScheduledExecutor {
 
                     TokenResponse tokenResponse = OAuthClient.generateToken(oAuthEndpoint.getTokenApiUrl(),
                             oAuthEndpoint.getApiKey(), oAuthEndpoint.getApiSecret(), oAuthEndpoint.getUsername(),
-                            oAuthEndpoint.getPassword());
+                            oAuthEndpoint.getPassword(), oAuthEndpoint.getGrantType());
                     log.info("Access token generated: " + getEndpointId(oAuthEndpoint)
                             + " [access-token] " + tokenResponse.getAccessToken());
                     TokenCache.getInstance().getTokenMap().put(oAuthEndpoint.getId(), tokenResponse.getAccessToken());
